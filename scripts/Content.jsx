@@ -13,11 +13,11 @@ export function Content(props) {
 
   return (
     <div>
-      <div className="submission">
-        <Form onNewMessage={handleNewMessage}/> 
-      </div>
       <div className="chat" id="chat">
         <Messages val={message} />
+      </div>
+      <div className="submission">
+        <Form onNewMessage={handleNewMessage}/> 
       </div>
     </div>
   );

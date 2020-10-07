@@ -13,6 +13,8 @@ body {
 .chat {
     overflow: auto;
     height: 500px;
+    display: flex;
+    flex-direction: column-reverse;
 }
 .chatRoom {
     list-style-type: none;
