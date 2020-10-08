@@ -1,18 +1,30 @@
-import React, { useState } from "react";
+import * as React from "react";
 import { Socket } from './Socket';
 
 export function Content(props) {
   // List of messages that are saved
-  const [message, addMessageToList] = useState([]);
+  const [message, addMessageToList] = React.useState([]);
+  const [userCount, setUserCount] = React.useState(0);
   
   function handleNewMessage(newMsg) {
     addMessageToList(prevList => {
       return [...prevList, newMsg];
     });
   }
+  
+  function updateUserCount(){
+      React.useEffect(() => {
+      Socket.on('usercount', (data) => { 
+        setUserCount(data['count']);
+      });
+    });
+  }
+  
+  updateUserCount();
 
   return (
     <div>
+      <h1>User Count: {userCount} ?? </h1>
       <div className="chat" id="chat">
         <Messages val={message} />
       </div>
@@ -23,10 +35,12 @@ export function Content(props) {
   );
 }
 
+
+
 // Form holds input text box, submit button
 function Form(props){
   // text holds the current input being typed in the input box
-  const [text, setText] = useState("");
+  const [text, setText] = React.useState("");
   
   // to submit message if the user types enter
   function handleChange(e) {
@@ -49,6 +63,8 @@ function Form(props){
       <button type="submit">Submit</button>
     </form>);
 }
+
+
 
 // props.val is the state for the list of messages. 
 function Messages(props) {
