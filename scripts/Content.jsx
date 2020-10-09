@@ -6,10 +6,17 @@ export function Content(props) {
   const [message, addMessageToList] = React.useState([]);
   const [userCount, setUserCount] = React.useState(0);
   
-  function handleNewMessage(newMsg) {
-    addMessageToList(prevList => {
-      return [...prevList, newMsg];
+  function handleNewMessage() {
+    React.useEffect(() => {
+      Socket.on('new message received', sendMessage);
+      return(() => {
+        Socket.off('new message received', sendMessage);
+      });
     });
+  }
+  
+  function sendMessage(data){
+    addMessageToList(data['allMessages']);
   }
   
   function updateUserCount(){
@@ -20,16 +27,17 @@ export function Content(props) {
     });
   }
   
+  handleNewMessage();
   updateUserCount();
 
   return (
     <div>
-      <h1>User Count: {userCount} ?? </h1>
+      <h1>User Count: {userCount}</h1>
       <div className="chat" id="chat">
         <Messages val={message} />
       </div>
       <div className="submission">
-        <Form onNewMessage={handleNewMessage}/> 
+        <Form/> 
       </div>
     </div>
   );
@@ -50,10 +58,11 @@ function Form(props){
     }
   }
   
-  // Set props.onNewMessage to the input text. This will send the text input back to Content(), which will call handleNewMessage() to add it to the list of messages
   function handleSubmit(e){
     e.preventDefault();
-    props.onNewMessage(text); 
+    Socket.emit('new message sent', {
+      'message': text
+    });
     setText("");
   }
 
