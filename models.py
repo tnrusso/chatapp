@@ -5,7 +5,7 @@ from app import db
 class Users(db.Model):
     __tablename__='users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    userName = db.Column(db.String(50), nullable=False) # set unique=True
+    userName = db.Column(db.String(50), unique=True, nullable=False)
     messages = db.relationship("Chatlog", backref="user") # When backref = users, you can get user of a message by doing db_message.user
     
     def __init__(self,n):

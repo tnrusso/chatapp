@@ -54,8 +54,8 @@ def emit_all_messages():
 @socketio.on('new message sent')
 def on_new_message(msg):
     # add new message to database, then call emit_all_messages to send them
-    usersID = db.session.query(models.Users.id).filter(models.Users.userName == request.sid).one()[0]
-    db.session.add(models.Chatlog(msg['message'], usersID)); # userID is currently set to be 
+    usersID = db.session.query(models.Users.id).filter(models.Users.userName == request.sid) # Search for user id based on their username, as username is unnique
+    db.session.add(models.Chatlog(msg['message'], usersID)); # userID (Foreign key) is set to the id of the user (Primary key in 'users' model)
     db.session.commit();
     emit_all_messages()
 
@@ -71,6 +71,11 @@ def on_connect():
     socketio.emit('usercount', { # Update user count
         'count': numUsers
     })
+    # Check if the bot is already in the db, exists returns None if it DNE, and Bot if it does. 
+    exists = db.session.query(models.Users.userName).filter(models.Users.userName == 'Bot').scalar()
+    if (exists is None):
+        db.session.add(models.Users('Bot')); # The chat bot will take the first row in the users model
+        db.session.commit();
     db.session.add(models.Users(request.sid)); # For now, when a user connects to the socket, they are added to the db with their unique session id as their username (until M2)
     db.session.commit();
     emit_all_messages()
