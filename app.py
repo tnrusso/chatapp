@@ -6,6 +6,8 @@ import flask_sqlalchemy
 import flask_socketio
 import models
 from flask import request
+import json
+import requests
 
 app = flask.Flask(__name__)
 socketio = flask_socketio.SocketIO(app)
@@ -58,8 +60,12 @@ def bot_command_called(botCall):
             botResponse = "I am a bot! Hello!"
         elif(botCall == '!!help'):
             botResponse = "The commands that I recognize are: !!about !!help !!funtranslate"
-        elif(botCall[0:14] == '!!funtranslate'):
-            botResponse = "Translating..." # Translate the text from botResponse[14:]
+        elif(botCall[0:14] == '!!funtranslate'): # Translate to yoda language https://funtranslations.com/api/yoda
+            url = 'https://api.funtranslations.com/translate/yoda.json?text=' + botCall[14:]
+            response = requests.get(url)
+            json_body = response.json()
+            yodaTranslate = json_body['contents']['translated']
+            botResponse = yodaTranslate # Translate the text from botCall[14:], limit of 5 calls an hour, 60 a day
         else:
             botResponse = "I do not recognize that command. Type !!help to see all the possible commands"
         db.session.add(models.Chatlog(botResponse, botId));
