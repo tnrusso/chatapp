@@ -82,7 +82,10 @@ function Messages(props) {
   return (
     <ul className="chatRoom">
       {props.msg.map((message, index) => (
-        <li key={index} className="chatMessages">{message} Sent by {props.un[index]}</li>
+        <li key={index} className="chatMessages">
+          <p className={props.un[index]=='Bot' ? "li_bot_user" : "li_user"}>{props.un[index]}: </p>
+          <p className={props.un[index]=='Bot' ? "li_bot_message" : "li_message"}>{message}</p>
+        </li>
       ))}
     </ul>
   );

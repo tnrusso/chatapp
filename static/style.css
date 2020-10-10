@@ -6,21 +6,27 @@ body {
 
 #content {
     background-color: white;
-    width: 1200px;
-    justify-content: center;
+    width: 100%;
+    margin: 0;
+}
+h1 {
     text-align: center;
 }
-.chat {
+/* Messages */
+.chat { /* div that holds the ul li */
     overflow: auto;
-    height: 500px;
+    height: 560px;
     display: flex;
     flex-direction: column-reverse;
-}
-.chatRoom {
+} 
+.chatRoom { /* ul */
     list-style-type: none;
+    margin: 0;
 }
-.chatMessages {
+.chatMessages { /* li */
     min-height: 20px;
+    height: auto;
+    word-wrap:break-word;
     margin: 0px 0px 0px -40px;
     padding: 10px;
     background-color: #0984e3;
@@ -28,11 +34,33 @@ body {
 .chatMessages:nth-child(odd) {
     background-color: #74b9ff; 
 }
+p { /* to reduce space between the user's name and message */
+    margin: 0;
+}
+.li_user {
+    font-size: 12pt;
+    font-weight: bold;
+}
+.li_message {
+    font-size: 16pt;
+}
+.li_bot_user {
+    color: #158467;
+    font-size: 12pt;
+    font-weight: bold;
+}
+.li_bot_message {
+    color: #158467;
+    font-size: 16pt;
+    font-style: italic;
+}
+
+/* Form */
 input{
     height: 40px;
-    width: 900px;
+    width: 80%;
 }
 button {
     height: 40px;
-    width: 200px;
+    width: 20%;
 }
