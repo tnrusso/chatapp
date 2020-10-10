@@ -51,6 +51,22 @@ def emit_all_messages():
         'user_of_message': userNamesOfMessages
     })
 
+def bot_command_called(botCall):
+        botResponse = ""
+        botId = db.session.query(models.Users.id).filter(models.Users.userName == 'Bot')
+        if(botCall == '!!about'):
+            botResponse = "I am a bot! Hello!"
+        elif(botCall == '!!help'):
+            botResponse = "The commands that I recognize are: !!about !!help !!funtranslate"
+        elif(botCall[0:14] == '!!funtranslate'):
+            botResponse = "Translating..." # Translate the text from botResponse[14:]
+        else:
+            botResponse = "I do not recognize that command. Type !!help to see all the possible commands"
+        db.session.add(models.Chatlog(botResponse, botId));
+        db.session.commit();
+        emit_all_messages()
+
+
 @socketio.on('new message sent')
 def on_new_message(msg):
     # add new message to database, then call emit_all_messages to send them
@@ -58,8 +74,10 @@ def on_new_message(msg):
     db.session.add(models.Chatlog(msg['message'], usersID)); # userID (Foreign key) is set to the id of the user (Primary key in 'users' model)
     db.session.commit();
     emit_all_messages()
-
-
+    # After the user sends a message, check to see if it was a bot command, and if so the bot will respond
+    if('!!' in msg['message'][0:2]): # bot commands start with '!!', so based on text afterwards determines the bot's response
+        bot_command_called(msg['message'])
+            
 numUsers = 0
 @socketio.on('connect')
 def on_connect():
