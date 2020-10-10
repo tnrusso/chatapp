@@ -4,6 +4,7 @@ import { Socket } from './Socket';
 export function Content(props) {
   // List of messages that are saved
   const [message, addMessageToList] = React.useState([]);
+  const [userN, addUser] = React.useState([]);
   const [userCount, setUserCount] = React.useState(0);
   
   function handleNewMessage() {
@@ -17,6 +18,7 @@ export function Content(props) {
   
   function sendMessage(data){
     addMessageToList(data['allMessages']);
+    addUser(data['user_of_message']);
   }
   
   function updateUserCount(){
@@ -34,7 +36,7 @@ export function Content(props) {
     <div>
       <h1>User Count: {userCount}</h1>
       <div className="chat" id="chat">
-        <Messages val={message} />
+        <Messages msg={message} un={userN} />
       </div>
       <div className="submission">
         <Form/> 
@@ -75,12 +77,12 @@ function Form(props){
 
 
 
-// props.val is the state for the list of messages. 
+// props.msg is the state for the list of messages. 
 function Messages(props) {
   return (
     <ul className="chatRoom">
-      {props.val.map((message, index) => (
-        <li key={index} className="chatMessages">{message}</li>
+      {props.msg.map((message, index) => (
+        <li key={index} className="chatMessages">{message} Sent by {props.un[index]}</li>
       ))}
     </ul>
   );
