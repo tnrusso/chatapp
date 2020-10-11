@@ -40,7 +40,7 @@ def emit_all_messages():
     ]
     # All of the userId's of each message
     userId_of_messages = [ \
-        db_user1234.userId for db_user1234 in \
+        db_user.userId for db_user in \
         db.session.query(models.Chatlog).all()
     ]
     # Get the username for each message by filtering by their userId (Users' id)
@@ -57,17 +57,29 @@ def bot_command_called(botCall):
         botResponse = ""
         botId = db.session.query(models.Users.id).filter(models.Users.userName == 'Bot')
         if(botCall == '!!about'):
-            botResponse = "I am a bot! Hello!"
+            botResponse = "A bot created for this project I am... Type !!help, my commands to see. Yes, hrrmmm."
         elif(botCall == '!!help'):
-            botResponse = "The commands that I recognize are: !!about !!help !!funtranslate"
+            botResponse = "!!about !!help !!funtranslate !!quote, the commands that I recognize are"
         elif(botCall[0:14] == '!!funtranslate'): # Translate to yoda language https://funtranslations.com/api/yoda
             url = 'https://api.funtranslations.com/translate/yoda.json?text=' + botCall[14:]
             response = requests.get(url)
             json_body = response.json()
             yodaTranslate = json_body['contents']['translated']
             botResponse = yodaTranslate # Translate the text from botCall[14:], limit of 5 calls an hour, 60 a day
+        elif(botCall == '!!quote'): # Random quote from yoda
+            url = 'http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote'
+            response = requests.get(url)
+            json_body = response.json()
+            tooManyCalls = 0
+            while('yoda'.lower() not in (json_body['starWarsQuote']).lower()): # This API only returns random quotes from random SW characters, so keep making requests until we get a quote from Yoda.
+                response = requests.get(url)
+                json_body = response.json()
+                tooManyCalls += 1
+                if(tooManyCalls == 25): # Just incase the API struggles to find a yoda quote, stop after 25 calls (Rate limit = 10k calls per day). This will probably never happen
+                    break
+            botResponse = json_body['starWarsQuote']
         else:
-            botResponse = "I do not recognize that command. Type !!help to see all the possible commands"
+            botResponse = "Recognize that command I do not. All possible commands, type !!help to see"
         db.session.add(models.Chatlog(botResponse, botId));
         db.session.commit();
         emit_all_messages()
