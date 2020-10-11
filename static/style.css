@@ -10,20 +10,25 @@ body {
     width: 100%;
     margin: 0;
 }
+
 h1 {
     text-align: center;
 }
+
+
 /* Messages */
 .chat { /* div that holds the ul li */
     overflow: auto;
     height: 560px;
     display: flex;
     flex-direction: column-reverse;
-} 
+}
+
 .chatRoom { /* ul */
     list-style-type: none;
     margin: 0;
 }
+
 .chatMessages { /* li */
     min-height: 20px;
     height: auto;
@@ -32,29 +37,43 @@ h1 {
     padding: 10px;
     background-color: #0984e3;
 }
+
 .chatMessages:nth-child(odd) {
     background-color: #74b9ff; 
 }
+
 p { /* to reduce space between the user's name and message */
     margin: 0;
 }
+
 .li_user {
     font-size: 12pt;
     font-weight: bold;
 }
+
 .li_message {
     font-size: 16pt;
 }
+
 .li_bot_user {
-    color: #158467;
+    color: #045757;
     font-size: 12pt;
     font-weight: bold;
 }
+
 .li_bot_message {
-    color: #158467;
+    color: #045757;
     font-size: 16pt;
     font-style: italic;
 }
+
+.yodaImg {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    content:url('/static/yoda.png')
+}
+
 
 /* Form */
 input{
@@ -64,10 +83,4 @@ input{
 button {
     height: 40px;
     width: 20%;
-}
-.yodaImg {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    content:url('/static/yoda.png')
 }
