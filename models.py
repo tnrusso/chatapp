@@ -17,7 +17,7 @@ class Chatlog(db.Model):
     __tablename__='chatlog'
     
     id = db.Column(db.Integer, primary_key=True)
-    message = db.Column(db.String(100))
+    message = db.Column(db.String(1000))
     userId = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     
     def __init__(self, m, uid): # Runs the first time a new message is created

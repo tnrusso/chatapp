@@ -65,13 +65,6 @@ def bot_command_called(botCall):
             url = 'http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote'
             response = requests.get(url)
             json_body = response.json()
-            tooManyCalls = 0
-            while('yoda'.lower() not in (json_body['starWarsQuote']).lower()): # This API only returns random quotes from random SW characters, so keep making requests until we get a quote from Yoda.
-                response = requests.get(url)
-                json_body = response.json()
-                tooManyCalls += 1
-                if(tooManyCalls == 25): # Just incase the API struggles to find a yoda quote, stop after 25 calls (Rate limit = 10k calls per day). This will probably never happen
-                    break
             botResponse = json_body['starWarsQuote']
         else:
             botResponse = "Recognize that command I do not. All possible commands, type !!help to see"
