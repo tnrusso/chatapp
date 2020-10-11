@@ -1,8 +1,10 @@
 import json
 import requests
 
+
 # Still need one more chatbot command
 class ChatBot:
+    
     def __init__(self, botCall):
         self.botCall = botCall
         
