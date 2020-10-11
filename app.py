@@ -34,19 +34,14 @@ db.session.commit()
 # This function is called when a new message is sent, and when a user connects to the chat so all messages will be loaded on page load
 def emit_all_messages():
     # All messages
-    all_messages = [ \
-        db_message.message for db_message in \
-        db.session.query(models.Chatlog).all()
-    ]
-    # All of the userId's of each message
-    userId_of_messages = [ \
-        db_user.userId for db_user in \
-        db.session.query(models.Chatlog).all()
-    ]
+    all_messages = []
+    for db_message in db.session.query(models.Chatlog.message).all():
+        all_messages.append(db_message)
+        
     # Get the username for each message by filtering by their userId (Users' id)
     userNamesOfMessages = []
-    for msg_id in userId_of_messages:
-        userNamesOfMessages.append(db.session.query(models.Users.userName).filter(models.Users.id == msg_id).one()[0])
+    for msg_id in db.session.query(models.Chatlog.userId).all():
+        userNamesOfMessages.append(db.session.query(models.Users.userName).filter(models.Users.id == msg_id).one())
         
     socketio.emit('new message received', {
         'allMessages': all_messages,
