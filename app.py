@@ -50,7 +50,7 @@ def emit_all_messages():
 
 def bot_command_called(botCall):
         botResponse = ""
-        botId = db.session.query(models.Users.id).filter(models.Users.userName == 'Bot')
+        botId = db.session.query(models.Users.id).filter(models.Users.userName == 'YodaBot')
         if(botCall == '!!about'):
             botResponse = "A bot created for this project I am... Type !!help, my commands to see. Yes, hrrmmm."
         elif(botCall == '!!help'):
@@ -103,9 +103,9 @@ def on_connect():
         'count': numUsers
     })
     # Check if the bot is already in the db, exists returns None if it DNE, and Bot if it does. 
-    exists = db.session.query(models.Users.userName).filter(models.Users.userName == 'Bot').scalar()
+    exists = db.session.query(models.Users.userName).filter(models.Users.userName == 'YodaBot').scalar()
     if (exists is None):
-        db.session.add(models.Users('Bot')); # The chat bot will take the first row in the users model
+        db.session.add(models.Users('YodaBot')); # The chat bot will take the first row in the users model
         db.session.commit();
     db.session.add(models.Users(request.sid)); # For now, when a user connects to the socket, they are added to the db with their unique session id as their username (until M2)
     db.session.commit();

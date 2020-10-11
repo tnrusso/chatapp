@@ -83,8 +83,11 @@ function Messages(props) {
     <ul className="chatRoom">
       {props.msg.map((message, index) => (
         <li key={index} className="chatMessages">
-          <p className={props.un[index]=='Bot' ? "li_bot_user" : "li_user"}>{props.un[index]}: </p>
-          <p className={props.un[index]=='Bot' ? "li_bot_message" : "li_message"}>{message}</p>
+          <p className={props.un[index]=='YodaBot' ? "li_bot_user" : "li_user"}>{props.un[index]}: </p>
+          <p className={props.un[index]=='YodaBot' ? "li_bot_message" : "li_message"}>
+            <img className={props.un[index]=='YodaBot' ? 'yodaImg' : 'noImg'}></img>
+            {message}
+          </p>
         </li>
       ))}
     </ul>

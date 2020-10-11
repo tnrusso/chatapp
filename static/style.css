@@ -64,3 +64,9 @@ button {
     height: 40px;
     width: 20%;
 }
+.yodaImg {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    content:url('/static/yoda.png')
+}
