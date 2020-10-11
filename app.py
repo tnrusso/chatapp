@@ -6,8 +6,7 @@ import flask_sqlalchemy
 import flask_socketio
 import models
 from flask import request
-import json
-import requests
+from chatbot import ChatBot
 
 app = flask.Flask(__name__)
 socketio = flask_socketio.SocketIO(app)
@@ -49,25 +48,9 @@ def emit_all_messages():
     })
 
 def bot_command_called(botCall):
-        botResponse = ""
+        chatBot = ChatBot(botCall)
+        botResponse = chatBot.get_bot_response()
         botId = db.session.query(models.Users.id).filter(models.Users.userName == 'YodaBot')
-        if(botCall == '!!about'):
-            botResponse = "A bot created for this project I am... Type !!help, my commands to see. Yes, hrrmmm."
-        elif(botCall == '!!help'):
-            botResponse = "!!about !!help !!funtranslate !!quote, the commands that I recognize are"
-        elif(botCall[0:14] == '!!funtranslate'): # Translate to yoda language https://funtranslations.com/api/yoda
-            url = 'https://api.funtranslations.com/translate/yoda.json?text=' + botCall[14:]
-            response = requests.get(url)
-            json_body = response.json()
-            yodaTranslate = json_body['contents']['translated']
-            botResponse = yodaTranslate # Translate the text from botCall[14:], limit of 5 calls an hour, 60 a day
-        elif(botCall == '!!quote'): # Random quote from yoda
-            url = 'http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote'
-            response = requests.get(url)
-            json_body = response.json()
-            botResponse = json_body['starWarsQuote']
-        else:
-            botResponse = "Recognize that command I do not. All possible commands, type !!help to see"
         db.session.add(models.Chatlog(botResponse, botId));
         db.session.commit();
         emit_all_messages()
