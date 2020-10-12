@@ -30,7 +30,7 @@ h1 {
 }
 
 .chatMessages { /* li */
-    min-height: 20px;
+    min-height: 10px;
     height: auto;
     word-wrap:break-word;
     margin: 0px 0px 0px -40px;
@@ -47,23 +47,23 @@ p { /* to reduce space between the user's name and message */
 }
 
 .li_user {
-    font-size: 12pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
 .li_message {
-    font-size: 16pt;
+    font-size: 14pt;
 }
 
 .li_bot_user {
     color: #045757;
-    font-size: 12pt;
+    font-size: 10pt;
     font-weight: bold;
 }
 
 .li_bot_message {
     color: #045757;
-    font-size: 16pt;
+    font-size: 14pt;
     font-style: italic;
 }
 
