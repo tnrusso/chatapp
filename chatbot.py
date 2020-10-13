@@ -22,7 +22,10 @@ class ChatBot:
                 botResponse = json_body['error']['message']
             else:
                 yodaTranslate = json_body['contents']['translated']
-                botResponse = yodaTranslate
+                if(len(yodaTranslate) > 1000):
+                    botResponse = "Too long, your translation is. Please shorten it and try again. Yrsssss."
+                else:
+                    botResponse = yodaTranslate
         elif(self.botCall == '!!quote'): # Random quote from star wars
             url = 'http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote'
             response = requests.get(url)
