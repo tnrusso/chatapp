@@ -18,13 +18,19 @@ class ChatBot:
             url = 'https://api.funtranslations.com/translate/yoda.json?text=' + self.botCall[14:]
             response = requests.get(url)
             json_body = response.json()
-            yodaTranslate = json_body['contents']['translated']
-            botResponse = yodaTranslate
-        elif(self.botCall == '!!quote'): # Random quote from yoda
+            if('contents' not in json_body):
+                botResponse = json_body['error']['message']
+            else:
+                yodaTranslate = json_body['contents']['translated']
+                botResponse = yodaTranslate
+        elif(self.botCall == '!!quote'): # Random quote from star wars
             url = 'http://swquotesapi.digitaljedi.dk/api/SWQuote/RandomStarWarsQuote'
             response = requests.get(url)
             json_body = response.json()
-            botResponse = json_body['starWarsQuote']
+            if('starWarsQuote' not in json_body):
+                botResponse = "Out of API calls. Try again later"
+            else:
+                botResponse = json_body['starWarsQuote']
         elif(self.botCall == '!!ready'):
             randomNum = random.randint(0,1000)
             if(randomNum == 1):
