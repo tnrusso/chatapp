@@ -24,7 +24,7 @@ export function Form(props){
 
     return(
         <form onSubmit={handleSubmit}>
-            <input type="text" value={text} onChange={handleChange} />
+            <input type="text" value={text} onChange={handleChange} maxlength="1000"/>
             <button type="submit">Submit</button>
         </form>
     );
