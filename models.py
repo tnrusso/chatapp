@@ -7,10 +7,17 @@ class Users(db.Model):
     __tablename__='users'
     
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    userName = db.Column(db.String(50), unique=True, nullable=False)
+    userName = db.Column(db.String(100), nullable=False)
+    userEmail = db.Column(db.String(1000), unique=True, nullable=False)
+    userAvatar = db.Column(db.String(1000), nullable=False)
+    sessionID = db.Column(db.String(100))
     
-    def __init__(self,n):
+    def __init__(self, n, e, a, s):
         self.userName = n
+        self.userEmail = e
+        self.userAvatar = a
+        self.sessionID = s
+        
     def __repr__(self):
         return '<Users userName: %s>' % self.userName 
     
