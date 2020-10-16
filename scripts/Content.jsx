@@ -2,7 +2,7 @@ import * as React from "react";
 import { Socket } from './Socket';
 import { Form } from './Form';
 import { UnorderList } from './UnorderList';
-
+import { GoogleButton } from './GoogleButton';
 
 export function Content(props) {
     const [message, addMessageToList] = React.useState([]);
@@ -42,6 +42,7 @@ export function Content(props) {
             </div>
             <div>
                 <Form/> 
+                <GoogleButton/>
             </div>
         </div>
     );
