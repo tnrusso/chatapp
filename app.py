@@ -33,6 +33,12 @@ db.session.commit()
 botName = 'YodaBot'
 numUsers = 0
 
+def updateUserCount(count):
+    global numUsers
+    numUsers += count
+    socketio.emit('usercount', { # Update user count
+        'count': numUsers
+    })
 
 def emit_all_messages():
     # This function will save all of the messages from the database 
@@ -79,18 +85,15 @@ def on_new_message(msg):
     if('!!' in msg['message'][0:2]): # bot commands start with '!!'
         bot_command_called(msg['message'])
             
-            
+@socketio.on('new google user')
+def successful_google_login(userInfo):
+    name = userInfo['name']
+    email = userInfo['email']
+    avatar = userInfo['avatar']
+    updateUserCount(1)
+
 @socketio.on('connect')
 def on_connect():
-    global numUsers
-    numUsers += 1
-    socketio.emit('connected', {
-        'test': 'Connected'
-    })
-    socketio.emit('usercount', { # Update user count
-        'count': numUsers
-    })
-    
     # Check if the bot is already in the db, exists returns None if not, and YodaBot if it does. 
     exists = db.session.query(models.Users.userName).\
         filter(models.Users.userName == botName).scalar()
@@ -101,21 +104,19 @@ def on_connect():
     # New user added to db    
     db.session.add(models.Users(request.sid)); #Set username set to session id (until M2)
     db.session.commit();
+    updateUserCount(0)
     emit_all_messages()
 
 
 @socketio.on('disconnect')
 def on_disconnect():
-    global numUsers
-    numUsers -= 1
-    socketio.emit('usercount', { # Update user count
-        'count': numUsers
-    })
-
+    updateUserCount(-1)
+    print("DISCONNECT")
 
 @app.route('/')
 def index():
     emit_all_messages()
+    updateUserCount(0)
     return flask.render_template('index.html')
 
 

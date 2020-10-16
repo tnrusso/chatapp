@@ -6,7 +6,14 @@ import GoogleLogin from 'react-google-login';
 export function GoogleButton(){
     
     function handleLogin(response){
-        
+        const fullname = response.profileObj.name;
+        const emailAdress = response.profileObj.email;
+        const avatarLink = response.profileObj.imageUrl;
+        Socket.emit('new google user', {
+            'name': fullname,
+            'email': emailAdress,
+            'avatar': avatarLink
+        });
     }
     
     return(
