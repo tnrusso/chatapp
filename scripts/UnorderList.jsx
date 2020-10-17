@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Content } from './Content';
-
+import Linkify from 'react-linkify';
 
 export function UnorderList(props) {
     
@@ -13,7 +13,7 @@ export function UnorderList(props) {
                         {props.name[index]}: 
                     </p>
                     <p className={props.name[index]=='YodaBot' ? "li_bot_message" : "li_message"}>
-                        {message}
+                        <Linkify>{message}</Linkify>
                     </p>
                 </li>
             ))}
