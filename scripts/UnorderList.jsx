@@ -8,9 +8,11 @@ export function UnorderList(props) {
         <ul className="chatRoom">
             {props.msg.map((message, index) => (
                 <li key={index} className="chatMessages">
-                    <p className={props.name[index]=='YodaBot' ? "li_bot_user" : "li_user"}>{props.name[index]}: </p>
+                    <p className={props.name[index]=='YodaBot' ? "li_bot_user" : "li_user"}>
+                        <img className="user_avatar" src={props.pic[index]}></img>
+                        {props.name[index]}: 
+                    </p>
                     <p className={props.name[index]=='YodaBot' ? "li_bot_message" : "li_message"}>
-                        <img className={props.name[index]=='YodaBot' ? 'yodaImg' : 'noImg'}></img>
                         {message}
                     </p>
                 </li>

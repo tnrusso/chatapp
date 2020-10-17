@@ -7,6 +7,7 @@ import { GoogleButton } from './GoogleButton';
 export function Content(props) {
     const [message, addMessageToList] = React.useState([]);
     const [userName, addUsername] = React.useState([]);
+    const [userImage, addUserImage] = React.useState([]);
     const [userCount, setUserCount] = React.useState(0);
     
     function handleNewMessage() {
@@ -21,6 +22,7 @@ export function Content(props) {
     function sendMessage(data){
         addMessageToList(data['allMessages']);
         addUsername(data['user_of_message']);
+        addUserImage(data['users_avatar']);
     }
     
     function updateUserCount(){
@@ -38,7 +40,7 @@ export function Content(props) {
         <div>
             <h1>User Count: {userCount}</h1>
             <div className="chat">
-                <UnorderList msg={message} name={userName} />
+                <UnorderList msg={message} name={userName} pic={userImage} />
             </div>
             <div>
                 <Form/> 
