@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import GoogleLogin from 'react-google-login';
 
 export function GoogleButton(){
+    const [disable, setDisable] = React.useState(false);
     
     function handleLogin(response){
         const fullname = response.profileObj.name;
@@ -14,6 +15,7 @@ export function GoogleButton(){
             'email': emailAdress,
             'avatar': avatarLink
         });
+        setDisable(true);
     }
     
     return(
@@ -22,6 +24,7 @@ export function GoogleButton(){
             buttonText="Sign in with Google"
             onSuccess={handleLogin}
             inSignedIn={true}
+            disabled={disable}
             cookiePolicy={'single_host_origin'}
         />    
     );
