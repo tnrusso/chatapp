@@ -33,13 +33,11 @@ db.session.commit()
 botName = 'YodaBot'
 botEmail = 'no email'
 botAvatar = '/static/yoda.png'
-numUsers = 0
+connectedUsers = []
 
-def updateUserCount(count):
-    global numUsers
-    numUsers += count
+def updateUserCount():
     socketio.emit('usercount', { # Update user count
-        'count': numUsers
+        'count': len(connectedUsers)
     })
 
 def emit_all_messages():
@@ -59,6 +57,7 @@ def emit_all_messages():
             .filter(models.Users.id == msg_id).one())
         userAvatars.append(db.session.query(models.Users.userAvatar)\
             .filter(models.Users.id == msg_id).one())
+            
     socketio.emit('new message received', {
         'allMessages': all_messages,
         'user_of_message': userNamesOfMessages,
@@ -78,16 +77,16 @@ def bot_command_called(botCall):
         
 @socketio.on('new message sent')
 def on_new_message(msg):
-    # Add new message to database, then call emit_all_messages to update client
     usersID = db.session.query(models.Users.id) \
-        .filter(models.Users.sessionID == request.sid) # Search for user id based on session id
+        .filter(models.Users.sessionID == request.sid).first()
         
-    db.session.add(models.Chatlog(msg['message'], usersID));
-    db.session.commit();
-    emit_all_messages()
+    if(usersID is not None):    
+        db.session.add(models.Chatlog(msg['message'], usersID));
+        db.session.commit();
+        emit_all_messages()
     
     # After the user sends a message, check to see if it was a bot command
-    if('!!' in msg['message'][0:2]): # bot commands start with '!!'
+    if('!!' in msg['message'][0:2]):
         bot_command_called(msg['message'])
             
 @socketio.on('new google user')
@@ -95,27 +94,30 @@ def successful_google_login(userInfo):
     name = userInfo['name']
     email = userInfo['email']
     avatar = userInfo['avatar']
-    exists = db.session.query(models.Users.userEmail).\
-        filter(models.Users.userEmail == email).scalar()
-    if(exists is None):
+    
+    userAlreadyExists = db.session.query(models.Users).\
+        filter(models.Users.userEmail == email).first()
+    if(userAlreadyExists is None):
         db.session.add(models.Users(name, email, avatar, request.sid));
         db.session.commit();
     else:
-        user = db.session.query(models.Users).filter(models.Users.userEmail == email).first()
-        user.sessionID = request.sid
+        userAlreadyExists.sessionID = request.sid
         db.session.commit()
-    updateUserCount(1)
+        
+    if(email not in connectedUsers):
+        connectedUsers.append(email)
+        
+    updateUserCount()
     emit_all_messages()
 
 @socketio.on('connect')
 def on_connect():
-    # Check if the bot is already in the db, exists returns None if not, and YodaBot if it does. 
-    exists = db.session.query(models.Users.userName).\
-        filter(models.Users.userName == botName).scalar()
-    if (exists is None):
+    botExists = db.session.query(models.Users.userName).\
+        filter(models.Users.userName == botName).first()
+    if (botExists is None):
         db.session.add(models.Users(botName, botEmail, botAvatar, '1'));
         db.session.commit();
-    updateUserCount(0)
+    updateUserCount()
     emit_all_messages()
     
 @socketio.on('disconnect')
@@ -123,14 +125,14 @@ def on_disconnect():
     exists = db.session.query(models.Users).\
         filter(models.Users.sessionID == request.sid).first()
     if(exists is not None):
-        updateUserCount(-1)
+        connectedUsers.remove(exists.userEmail)
+        updateUserCount()
 
 @app.route('/')
 def index():
     emit_all_messages()
-    updateUserCount(0)
+    updateUserCount()
     return flask.render_template('index.html')
-
 
 if __name__ == '__main__': 
     socketio.run(
