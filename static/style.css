@@ -6,13 +6,13 @@ body {
 }
 
 #content {
-    background-color: white;
     width: 100%;
     margin: 0;
 }
 
 h1 {
     text-align: center;
+    color: white;
 }
 
 
@@ -67,11 +67,17 @@ p { /* to reduce space between the user's name and message */
     font-style: italic;
 }
 
-.yodaImg {
+.sent_image {
+    max-height: 400px;
+    max-width: 400px;
+}
+
+.user_avatar {
     width: 35px;
     height: 35px;
     border-radius: 50%;
-    content:url('/static/yoda.png')
+    margin-right: 5px;
+    vertical-align:middle;
 }
 
 
@@ -83,4 +89,8 @@ input{
 button {
     height: 40px;
     width: 20%;
+}
+
+GoogleLogin {
+    margin-top: 20px;
 }
