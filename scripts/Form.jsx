@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Socket } from './Socket';
-
+import { SubmitButton } from './SubmitButton';
 
 export function Form(props){
 
@@ -24,8 +24,8 @@ export function Form(props){
 
     return(
         <form onSubmit={handleSubmit}>
-            <input type="text" value={text} onChange={handleChange} maxlength="1000"/>
-            <button type="submit">Submit</button>
+            <input type="text" value={text} onChange={handleChange} maxLength="1000"/>
+            <SubmitButton/>
         </form>
     );
     
