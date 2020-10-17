@@ -53,13 +53,16 @@ def emit_all_messages():
         all_messages.append(db_message)
         
     userNamesOfMessages = []
+    userAvatars = []
     for msg_id in db.session.query(models.Chatlog.userId).all():
         userNamesOfMessages.append(db.session.query(models.Users.userName)\
             .filter(models.Users.id == msg_id).one())
-        
+        userAvatars.append(db.session.query(models.Users.userAvatar)\
+            .filter(models.Users.id == msg_id).one())
     socketio.emit('new message received', {
         'allMessages': all_messages,
-        'user_of_message': userNamesOfMessages
+        'user_of_message': userNamesOfMessages,
+        'users_avatar': userAvatars
     })
 
 
@@ -94,7 +97,6 @@ def successful_google_login(userInfo):
     avatar = userInfo['avatar']
     exists = db.session.query(models.Users.userEmail).\
         filter(models.Users.userEmail == email).scalar()
-    print(exists)
     if(exists is None):
         db.session.add(models.Users(name, email, avatar, request.sid));
         db.session.commit();
@@ -113,11 +115,15 @@ def on_connect():
     if (exists is None):
         db.session.add(models.Users(botName, botEmail, botAvatar, '1'));
         db.session.commit();
+    updateUserCount(0)
     emit_all_messages()
     
 @socketio.on('disconnect')
 def on_disconnect():
-    updateUserCount(-1)
+    exists = db.session.query(models.Users).\
+        filter(models.Users.sessionID == request.sid).first()
+    if(exists is not None):
+        updateUserCount(-1)
 
 @app.route('/')
 def index():
