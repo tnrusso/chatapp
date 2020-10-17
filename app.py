@@ -31,6 +31,8 @@ db.session.commit()
 
 
 botName = 'YodaBot'
+botEmail = 'no email'
+botAvatar = '/static/yoda.png'
 numUsers = 0
 
 def updateUserCount(count):
@@ -75,7 +77,7 @@ def bot_command_called(botCall):
 def on_new_message(msg):
     # Add new message to database, then call emit_all_messages to update client
     usersID = db.session.query(models.Users.id) \
-        .filter(models.Users.userName == request.sid) # Search for user id based on their username
+        .filter(models.Users.sessionID == request.sid) # Search for user id based on session id
         
     db.session.add(models.Chatlog(msg['message'], usersID));
     db.session.commit();
@@ -90,7 +92,18 @@ def successful_google_login(userInfo):
     name = userInfo['name']
     email = userInfo['email']
     avatar = userInfo['avatar']
+    exists = db.session.query(models.Users.userEmail).\
+        filter(models.Users.userEmail == email).scalar()
+    print(exists)
+    if(exists is None):
+        db.session.add(models.Users(name, email, avatar, request.sid));
+        db.session.commit();
+    else:
+        user = db.session.query(models.Users).filter(models.Users.userEmail == email).first()
+        user.sessionID = request.sid
+        db.session.commit()
     updateUserCount(1)
+    emit_all_messages()
 
 @socketio.on('connect')
 def on_connect():
@@ -98,20 +111,13 @@ def on_connect():
     exists = db.session.query(models.Users.userName).\
         filter(models.Users.userName == botName).scalar()
     if (exists is None):
-        db.session.add(models.Users(botName));
+        db.session.add(models.Users(botName, botEmail, botAvatar, '1'));
         db.session.commit();
-    
-    # New user added to db    
-    db.session.add(models.Users(request.sid)); #Set username set to session id (until M2)
-    db.session.commit();
-    updateUserCount(0)
     emit_all_messages()
-
-
+    
 @socketio.on('disconnect')
 def on_disconnect():
     updateUserCount(-1)
-    print("DISCONNECT")
 
 @app.route('/')
 def index():
