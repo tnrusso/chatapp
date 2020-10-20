@@ -22,6 +22,7 @@ h1 {
     height: 560px;
     display: flex;
     flex-direction: column-reverse;
+    background-color: white;
 }
 
 .chatRoom { /* ul */
