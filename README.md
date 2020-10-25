@@ -1,4 +1,4 @@
-# CS490 Project 2 Milestone 2
+# CS490 Project 2 Milestone 3
 
 # Description
 Project 2 is a web application created using Flask, HTML, CSS, React, SQLAlchemy (PostgreSQL), and Socket.IO. It is a chatroom application similiar to Google Hangouts, WhatsApp, and Slack, along with a chatbot that will respond to user inputted commands. It is deployed on Heroku and can be found [here](https://project2-m1-tnr24.herokuapp.com/)
