@@ -9,29 +9,54 @@ import unittest.mock as mock
 import sys
 sys.path.append('.')
 import app
+from app import emit_all_messages, add_user, update_user_count, successful_google_login
 from app import app
 from chatbot import ChatBot
-
+import models
 import json
+
+import flask
+import flask_sqlalchemy
+import flask_socketio
+from flask import request, Flask, session
+
+from flask_sqlalchemy import SQLAlchemy
+
+import socketio
 
 KEY_INPUT = "input"
 KEY_EXPECTED = "expected"
 
+KEY_USER = "name"
+KEY_EMAIL = "email"
+KEY_AVATAR = "avatar"
+KEY_SESSION_ID = "sessionID"
+KEY_MESSAGE = "message"
+KEY_ID = "id"
 
-class MockedFuntranslate:
-    def __init__(self, text):
-        self.text = text
+class MockedModelsUsers:
+    def __init__(self, userName, userEmail, userAvatar, sessionID):
+        self.userName = userName
+        self.userEmail = userEmail
+        self.userAvatar = userAvatar
+        self.sessionID = sessionID
+
+class MockedModelsChatlog:
+    def __init__(self, message, userID):
+        self.message = message
+        self.userID = userID
 
 class MockedTestCases(unittest.TestCase):
     def setUp(self):
-        
+        self.app = Flask(__name__)
+        self.socketio = flask_socketio.SocketIO(app)
+
         self.success_quote_params = [
             {
                 KEY_INPUT: "!!quote",
                 KEY_EXPECTED: "The Force will be with you. Always. — Obi-Wan Kenobi"
             }    
         ]
-        
         
         self.success_translate_params = [
             {
@@ -53,7 +78,41 @@ class MockedTestCases(unittest.TestCase):
                 KEY_EXPECTED: "Too long, your translation is. Please shorten it and try again. Yrsssss."
             }    
         ]
-
+        
+        self.success_add_user_params = [
+            {
+                KEY_USER:"My Name",
+                KEY_EMAIL:"useremail@gmail.com",
+                KEY_AVATAR: "avatar",
+                KEY_SESSION_ID: "session id"
+            },
+            {
+                KEY_USER: "Users Full Name",
+                KEY_EMAIL: "hello@gmail.com",
+                KEY_AVATAR: "avatar",
+                KEY_SESSION_ID: "session id" 
+            }
+        ]
+        
+        self.success_add_message_params = [
+            {
+                KEY_MESSAGE: "message text",
+                KEY_ID: 1
+            }    
+        ]
+        
+        self.success_socket_on = [
+            {
+                KEY_INPUT: "new google user",
+                KEY_EXPECTED: {
+                    'name': "new google user",
+                    'email': 'email@email.com',
+                    'avatar': 'avatar'
+                }
+            }    
+        ]
+        
+        
     
     def mocked_api_funtranslate(self, botCall):
         return (
@@ -95,7 +154,22 @@ class MockedTestCases(unittest.TestCase):
             }    
         )
 
+    def mocked_add_user(self, name, email, avatar):
+        return MockedModelsUsers(name, email, avatar, 123)
         
+    def mocked_add_new_message(self,message,uid):
+        return MockedModelsChatlog(message,uid)
+    
+    def test_add_user_to_db(self):
+        for test in self.success_add_user_params:
+            with mock.patch('models.db.session.add', self.mocked_add_user):
+                response = models.Users(test[KEY_USER], test[KEY_EMAIL], test[KEY_AVATAR], test[KEY_SESSION_ID])
+                
+    def test_add_message_to_db(self):
+        for test in self.success_add_message_params:
+            with mock.patch('models.db.session.add', self.mocked_add_new_message):
+                response = models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
+    
     def test_chatbot_translate(self):
         for test in self.success_translate_params:
             chatbot = ChatBot(test[KEY_INPUT])
@@ -147,8 +221,13 @@ class MockedTestCases(unittest.TestCase):
             mock_get_patcher.stop()
             expected = test[KEY_EXPECTED]
             self.assertEqual(response, expected)
-    
-    
+        
+    @mock.patch("flask_socketio.SocketIO.emit")
+    def test_socket_emit(self, emit_message):
+        for test in self.success_socket_on:
+            with mock.patch("app.add_user", self.mocked_add_user):
+                self.socketio.emit(test[KEY_INPUT], test[KEY_EXPECTED])
+                successful_google_login(test[KEY_EXPECTED])
     
 if __name__ == '__main__':
     unittest.main()
