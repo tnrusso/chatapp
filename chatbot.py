@@ -25,7 +25,7 @@ class ChatBot:
             response = requests.get(url)
             json_body = response.json()
             if('contents' not in json_body):
-                bot_response = json_body['error']['message']
+                bot_response = "Later, try again"
             elif(len(json_body['contents']['translated']) > 1000):
                 bot_response = (
                     "Too long, your translation is. "+\
