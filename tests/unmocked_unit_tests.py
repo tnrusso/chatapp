@@ -1,7 +1,6 @@
 import unittest
 import sys
 sys.path.append('.')
-import app
 from app import app, bot_command_called
 from chatbot import ChatBot
 
