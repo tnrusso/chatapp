@@ -81,24 +81,24 @@ class UnmockedTestCases(unittest.TestCase):
         ]
 
     
-    def test_success_bot_message(self):
-        for test in self.success_chatbot_params:
-            response = ChatBot(test[KEY_INPUT]).get_bot_response()
-            expected = test[KEY_EXPECTED]
-            self.assertEqual(response, expected)
+    # def test_success_bot_message(self):
+    #     for test in self.success_chatbot_params:
+    #         response = ChatBot(test[KEY_INPUT]).get_bot_response()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertEqual(response, expected)
 
-    def test_failure_bot_message(self):
-        for test in self.failure_chatbot_params:
-            response = ChatBot(test[KEY_INPUT]).get_bot_response()
-            expected = test[KEY_EXPECTED]
-            self.assertNotEqual(response, expected)
+    # def test_failure_bot_message(self):
+    #     for test in self.failure_chatbot_params:
+    #         response = ChatBot(test[KEY_INPUT]).get_bot_response()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertNotEqual(response, expected)
 
-    def test_success_ready_params(self):
-        for test in self.success_ready_params:
-            response = ChatBot(test[KEY_INPUT]).get_bot_response()
-            expected = test[KEY_EXPECTED]
-            expected_alt = test[KEY_EXPECTED_ALT]
-            self.assertTrue(response == expected or response == expected_alt)
+    # def test_success_ready_params(self):
+    #     for test in self.success_ready_params:
+    #         response = ChatBot(test[KEY_INPUT]).get_bot_response()
+    #         expected = test[KEY_EXPECTED]
+    #         expected_alt = test[KEY_EXPECTED_ALT]
+    #         self.assertTrue(response == expected or response == expected_alt)
 
     # def test_bot_command_call(self):
     #     for test in self.success_bot_command_call:

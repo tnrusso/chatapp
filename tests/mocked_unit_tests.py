@@ -161,109 +161,109 @@ class MockedTestCases(unittest.TestCase):
             "faction": 0,
         }
 
-    def mocked_add_user(self, name, email, avatar):
-        return mocked_models_users(name, email, avatar, 123)
+    # def mocked_add_user(self, name, email, avatar):
+    #     return mocked_models_users(name, email, avatar, 123)
 
-    def mocked_add_new_message(self, message, uid):
-        return mocked_models_chatlog(message, uid)
+    # def mocked_add_new_message(self, message, uid):
+    #     return mocked_models_chatlog(message, uid)
 
-    def mocked_add_bot(self):
-        bot = mocked_models_users("name", "email", "avatar", "1")
-        return bot
+    # def mocked_add_bot(self):
+    #     bot = mocked_models_users("name", "email", "avatar", "1")
+    #     return bot
 
-    def mocked_db_query(self, name):
-        return None
+    # def mocked_db_query(self, name):
+    #     return None
 
-    def test_add_user_to_db(self):
-        for test in self.success_add_user_params:
-            with mock.patch("models.db.session.add", self.mocked_add_user):
-                models.Users(
-                    test[KEY_USER],
-                    test[KEY_EMAIL],
-                    test[KEY_AVATAR],
-                    test[KEY_SESSION_ID],
-                )
-                expected = self.mocked_add_user(
-                    test[KEY_USER], test[KEY_EMAIL], test[KEY_AVATAR]
-                )
-                self.assertIsInstance(expected, mocked_models_users)
+    # def test_add_user_to_db(self):
+    #     for test in self.success_add_user_params:
+    #         with mock.patch("models.db.session.add", self.mocked_add_user):
+    #             models.Users(
+    #                 test[KEY_USER],
+    #                 test[KEY_EMAIL],
+    #                 test[KEY_AVATAR],
+    #                 test[KEY_SESSION_ID],
+    #             )
+    #             expected = self.mocked_add_user(
+    #                 test[KEY_USER], test[KEY_EMAIL], test[KEY_AVATAR]
+    #             )
+    #             self.assertIsInstance(expected, mocked_models_users)
 
-    def test_add_message_to_db(self):
-        for test in self.success_add_message_params:
-            with mock.patch("models.db.session.add", self.mocked_add_new_message):
-                models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
-                expected = self.mocked_add_new_message(test[KEY_MESSAGE], test[KEY_ID])
-                self.assertIsInstance(expected, mocked_models_chatlog)
+    # def test_add_message_to_db(self):
+    #     for test in self.success_add_message_params:
+    #         with mock.patch("models.db.session.add", self.mocked_add_new_message):
+    #             models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
+    #             expected = self.mocked_add_new_message(test[KEY_MESSAGE], test[KEY_ID])
+    #             self.assertIsInstance(expected, mocked_models_chatlog)
 
-    def test_chatbot_translate(self):
-        for test in self.success_translate_params:
-            chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate("")
-            mock_get = mock_get_patcher.start()
-            mock_get.return_value = mock.Mock(status_code=200)
-            mock_get.return_value.json.return_value = translated_text
-            response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
-            expected = test[KEY_EXPECTED]
-            self.assertEqual(response, expected)
+    # def test_chatbot_translate(self):
+    #     for test in self.success_translate_params:
+    #         chatbot = ChatBot(test[KEY_INPUT])
+    #         mock_get_patcher = mock.patch("requests.get")
+    #         translated_text = self.mocked_api_funtranslate("")
+    #         mock_get = mock_get_patcher.start()
+    #         mock_get.return_value = mock.Mock(status_code=200)
+    #         mock_get.return_value.json.return_value = translated_text
+    #         response = chatbot.get_bot_response()
+    #         mock_get_patcher.stop()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertEqual(response, expected)
 
-    def test_chatbot_translate_failure(self):
-        for test in self.failure_translate_params:
-            chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate("")
-            mock_get = mock_get_patcher.start()
-            mock_get.return_value = mock.Mock(status_code=200)
-            mock_get.return_value.json.return_value = translated_text
-            response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
-            expected = test[KEY_EXPECTED]
-            self.assertNotEqual(response, expected)
+    # def test_chatbot_translate_failure(self):
+    #     for test in self.failure_translate_params:
+    #         chatbot = ChatBot(test[KEY_INPUT])
+    #         mock_get_patcher = mock.patch("requests.get")
+    #         translated_text = self.mocked_api_funtranslate("")
+    #         mock_get = mock_get_patcher.start()
+    #         mock_get.return_value = mock.Mock(status_code=200)
+    #         mock_get.return_value.json.return_value = translated_text
+    #         response = chatbot.get_bot_response()
+    #         mock_get_patcher.stop()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertNotEqual(response, expected)
 
-    def test_chatbot_quote_success(self):
-        for test in self.success_quote_params:
-            chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
-            quote = self.mocked_api_quote()
-            mock_get = mock_get_patcher.start()
-            mock_get.return_value = mock.Mock(status_code=200)
-            mock_get.return_value.json.return_value = quote
-            response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
-            expected = test[KEY_EXPECTED]
-            self.assertEqual(response, expected)
+    # def test_chatbot_quote_success(self):
+    #     for test in self.success_quote_params:
+    #         chatbot = ChatBot(test[KEY_INPUT])
+    #         mock_get_patcher = mock.patch("requests.get")
+    #         quote = self.mocked_api_quote()
+    #         mock_get = mock_get_patcher.start()
+    #         mock_get.return_value = mock.Mock(status_code=200)
+    #         mock_get.return_value.json.return_value = quote
+    #         response = chatbot.get_bot_response()
+    #         mock_get_patcher.stop()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertEqual(response, expected)
 
-    def test_chatbot_translate_length(self):
-        for test in self.success_translate_length_too_long:
-            chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate_length("")
-            mock_get = mock_get_patcher.start()
-            mock_get.return_value = mock.Mock(status_code=200)
-            mock_get.return_value.json.return_value = translated_text
-            response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
-            expected = test[KEY_EXPECTED]
-            self.assertEqual(response, expected)
+    # def test_chatbot_translate_length(self):
+    #     for test in self.success_translate_length_too_long:
+    #         chatbot = ChatBot(test[KEY_INPUT])
+    #         mock_get_patcher = mock.patch("requests.get")
+    #         translated_text = self.mocked_api_funtranslate_length("")
+    #         mock_get = mock_get_patcher.start()
+    #         mock_get.return_value = mock.Mock(status_code=200)
+    #         mock_get.return_value.json.return_value = translated_text
+    #         response = chatbot.get_bot_response()
+    #         mock_get_patcher.stop()
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertEqual(response, expected)
 
-    @mock.patch("flask_socketio.SocketIO.emit")
-    def test_socket_emit(self, emit_message):
-        for test in self.success_socket_user:
-            with mock.patch("app.add_user", self.mocked_add_user):
-                successful_google_login(test[KEY_EXPECTED])
-                expected = self.mocked_add_user(
-                    test[KEY_EXPECTED]["name"],
-                    test[KEY_EXPECTED]["email"],
-                    test[KEY_EXPECTED]["avatar"],
-                )
-                self.assertIsInstance(expected, mocked_models_users)
+    # @mock.patch("flask_socketio.SocketIO.emit")
+    # def test_socket_emit(self, emit_message):
+    #     for test in self.success_socket_user:
+    #         with mock.patch("app.add_user", self.mocked_add_user):
+    #             successful_google_login(test[KEY_EXPECTED])
+    #             expected = self.mocked_add_user(
+    #                 test[KEY_EXPECTED]["name"],
+    #                 test[KEY_EXPECTED]["email"],
+    #                 test[KEY_EXPECTED]["avatar"],
+    #             )
+    #             self.assertIsInstance(expected, mocked_models_users)
 
-    @mock.patch("flask_socketio.SocketIO.emit")
-    def test_socket_connect(self, emit_message):
-        with mock.patch("app.add_bot", self.mocked_add_bot):
-            on_connect()
-            self.assertEqual(on_connect(), None)
+    # @mock.patch("flask_socketio.SocketIO.emit")
+    # def test_socket_connect(self, emit_message):
+    #     with mock.patch("app.add_bot", self.mocked_add_bot):
+    #         on_connect()
+    #         self.assertEqual(on_connect(), None)
 
 
 if __name__ == "__main__":
