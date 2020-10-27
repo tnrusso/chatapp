@@ -109,20 +109,20 @@ class MockedTestCases(unittest.TestCase):
                 KEY_USER: "My Name",
                 KEY_EMAIL: "user_email@gmail.com",
                 KEY_AVATAR: "avatar",
-                KEY_SESSION_ID: "session id",
+                KEY_SESSION_ID: "123",
             },
             {
                 KEY_USER: "Users Full Name",
                 KEY_EMAIL: "hello@gmail.com",
                 KEY_AVATAR: "avatar",
-                KEY_SESSION_ID: "session id",
+                KEY_SESSION_ID: "123",
             },
         ]
 
         self.success_add_message_params = [
-            {KEY_MESSAGE: "message text", KEY_ID: 1},
-            {KEY_MESSAGE: "some text message", KEY_ID: 2},
-            {KEY_MESSAGE: "qwerrrrewdfasdfasdc", KEY_ID: 8},
+            {KEY_MESSAGE: "message text", KEY_ID: '1'},
+            {KEY_MESSAGE: "some text message", KEY_ID: '2'},
+            {KEY_MESSAGE: "qwerrrrewdfasdfasdc", KEY_ID: '8'},
         ]
 
         self.success_socket_user = [
@@ -196,7 +196,7 @@ class MockedTestCases(unittest.TestCase):
 
     def mocked_add_user(self, name, email, avatar):
         """Add user"""
-        return MockedModelUsers(name, email, avatar, 123)
+        return MockedModelUsers(name, email, avatar, '123')
 
     def mocked_add_new_message(self, message, uid):
         """Add new message"""
@@ -206,7 +206,7 @@ class MockedTestCases(unittest.TestCase):
         """Test add user"""
         for test in self.success_add_user_params:
             with mock.patch("models.db.session.add", self.mocked_add_user):
-                models.Users(
+                response = models.Users(
                     test[KEY_USER],
                     test[KEY_EMAIL],
                     test[KEY_AVATAR],
@@ -215,26 +215,30 @@ class MockedTestCases(unittest.TestCase):
                 expected = self.mocked_add_user(
                     test[KEY_USER], test[KEY_EMAIL], test[KEY_AVATAR]
                 )
-                self.assertIsInstance(expected, MockedModelUsers)
+                self.assertEqual(response.user_name, expected.user_name)
+                self.assertEqual(response.user_email, expected.user_email)
+                self.assertEqual(response.user_avatar, expected.user_avatar)
+                self.assertEqual(response.session_id, expected.session_id)
 
     def test_add_message_to_db(self):
         """Test add message"""
         for test in self.success_add_message_params:
             with mock.patch("models.db.session.add", self.mocked_add_new_message):
-                models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
+                response = models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
                 expected = self.mocked_add_new_message(test[KEY_MESSAGE], test[KEY_ID])
-                self.assertIsInstance(expected, MockedModelChatLog)
+                self.assertEqual(response.message, expected.message)
+                self.assertEqual(response.user_id, expected.user_id)
 
     def test_chatbot_translate_success(self):
         """Test success chatbot funtranslate"""
         for test in self.success_translate_params:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             translated_text = self.mocked_api_funtranslate("")
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertEqual(response, expected)
 
@@ -242,12 +246,12 @@ class MockedTestCases(unittest.TestCase):
         """Test failure chatbot translate"""
         for test in self.failure_translate_params:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             translated_text = self.mocked_api_funtranslate("")
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertNotEqual(response, expected)
 
@@ -255,12 +259,12 @@ class MockedTestCases(unittest.TestCase):
         """Test success chatbot quote"""
         for test in self.success_chatbot_quote:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             quote = self.mocked_api_quote()
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = quote
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertEqual(response, expected)
 
@@ -268,12 +272,12 @@ class MockedTestCases(unittest.TestCase):
         """Test failure chatbot quote"""
         for test in self.failure_chatbot_quote:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             quote = self.mocked_api_quote()
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = quote
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertNotEqual(response, expected)
 
@@ -281,12 +285,12 @@ class MockedTestCases(unittest.TestCase):
         """Test success chatbot translate long length"""
         for test in self.success_translate_length_too_long:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             translated_text = self.mocked_api_funtranslate_length("")
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertEqual(response, expected)
 
@@ -294,12 +298,12 @@ class MockedTestCases(unittest.TestCase):
         """Test failure chatbot translate long length"""
         for test in self.failure_translate_length_too_long:
             chatbot = ChatBot(test[KEY_INPUT])
-            mock_get_patcher = mock.patch("requests.get")
+            mock_get_patch = mock.patch("requests.get")
             translated_text = self.mocked_api_funtranslate_length("")
-            mock_get = mock_get_patcher.start()
+            mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
-            mock_get_patcher.stop()
+            mock_get_patch.stop()
             expected = test[KEY_EXPECTED]
             self.assertNotEqual(response, expected)
 
