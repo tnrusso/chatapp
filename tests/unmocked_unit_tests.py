@@ -100,10 +100,10 @@ class UnmockedTestCases(unittest.TestCase):
             expected_alt = test[KEY_EXPECTED_ALT]
             self.assertTrue(response == expected or response == expected_alt)
 
-    def test_bot_command_call(self):
-        for test in self.success_bot_command_call:
-            expected = test[KEY_EXPECTED]
-            self.assertEqual(bot_command_called(test[KEY_INPUT]), expected)
+    # def test_bot_command_call(self):
+    #     for test in self.success_bot_command_call:
+    #         expected = test[KEY_EXPECTED]
+    #         self.assertEqual(bot_command_called(test[KEY_INPUT]), expected)
 
 if __name__ == '__main__':
     unittest.main()
