@@ -13,6 +13,12 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-loader": "^8.0.5",
     "css-loader": "^3.4.2",
+    "eslint": "^7.12.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
     "jquery": "^3.2.1",
@@ -33,5 +39,22 @@
     "react-google-login": "^5.1.21",
     "react-linkify": "^1.0.0-alpha",
     "socket.io-client": "^2.3.1"
-  }
+  },
+  "name": "project2-tnr24",
+  "description": "# Description Project 2 is a web application created using Flask, HTML, CSS, React, SQLAlchemy (PostgreSQL), and Socket.IO. It is a chatroom application similiar to Google Hangouts, WhatsApp, and Slack, along with a chatbot that will respond to user inputted commands. It is deployed on Heroku and can be found [here](https://project2-m1-tnr24.herokuapp.com/)",
+  "version": "1.0.0",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NJIT-CS490/project2-m3-tnr24.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NJIT-CS490/project2-m3-tnr24/issues"
+  },
+  "homepage": "https://github.com/NJIT-CS490/project2-m3-tnr24#readme"
 }
