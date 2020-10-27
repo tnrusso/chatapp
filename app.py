@@ -1,5 +1,5 @@
-'''This module starts the flask server'''
-# pylint: disable=wrong-import-position,no-member,invalid-name
+"""This module starts the flask server"""
+# pylint: disable=wrong-import-position,no-member,invalid-name,redefined-outer-name
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
@@ -30,12 +30,12 @@ db = flask_sqlalchemy.SQLAlchemy(
 
 
 def init_db(app):
-    '''Initialize db'''
+    """Initialize db"""
     db.init_app(app)
     db.app = app
     db.create_all()
     db.session.commit()
-    
+
 init_db(app)
 
 import models
@@ -43,27 +43,29 @@ import models
 BOT_NAME = "YodaBot"
 BOT_EMAIL = "no email"
 BOT_AVATAR = "/static/yoda.png"
-BOT_EXISTS = ""
 CONNECTED_USERS = []
 
 
 def update_user_count():
-    '''Send number of connected users to the client'''
+    """Send number of connected users to the client"""
     socketio.emit("usercount", {"count": len(CONNECTED_USERS)})  # Update user count
 
+
 def add_user(name, email, avatar):
-    '''Add new user to database'''
-    
-    user_exist = db.session.query(models.Users).\
-        filter(models.Users.user_email == email).first()
-    if(user_exist is None):
-        db.session.add(models.Users(name, email, avatar, request.sid));
+    """Add new user to database"""
+
+    user_exist = (
+        db.session.query(models.Users).filter(models.Users.user_email == email).first()
+    )
+    if user_exist is None:
+        db.session.add(models.Users(name, email, avatar, request.sid))
     else:
         user_exist.session_id = request.sid
     db.session.commit()
 
+
 def add_bot():
-    '''Add chat bot to the chat if it doesnt already exist'''
+    """Add chat bot to the chat if it doesnt already exist"""
     BOT_EXISTS = (
         db.session.query(models.Users.user_name)
         .filter(models.Users.user_name == BOT_NAME)
@@ -73,14 +75,16 @@ def add_bot():
         db.session.add(models.Users(BOT_NAME, BOT_EMAIL, BOT_AVATAR, "1"))
         db.session.commit()
 
+add_bot()
+
 def emit_all_messages():
-    '''
+    """
     This function will save all of the messages from the database
     into all_messages, and send them to Content.jsx to display them.
 
     This function is called when a new message is sent, and
     when a user connects to the chat so all messages will be loaded on page load
-    '''
+    """
     all_messages = []
     for db_message in db.session.query(models.Chatlog.message).all():
         all_messages.append(db_message)
@@ -110,10 +114,12 @@ def emit_all_messages():
 
 
 def bot_command_called(bot_call):
-    '''Get the bot response to the user typed command'''
+    """Get the bot response to the user typed command"""
     chat_bot = ChatBot(bot_call)
     bot_response = chat_bot.get_bot_response()
-    bot_id = db.session.query(models.Users.id).filter(models.Users.user_name == BOT_NAME)
+    bot_id = db.session.query(models.Users.id).filter(
+        models.Users.user_name == BOT_NAME
+    )
     db.session.add(models.Chatlog(bot_response, bot_id))
     db.session.commit()
     emit_all_messages()
@@ -121,7 +127,7 @@ def bot_command_called(bot_call):
 
 @socketio.on("new message sent")
 def on_new_message(msg):
-    '''Handles when a message is submitted from input box'''
+    """Handles when a message is submitted from input box"""
     users_id = (
         db.session.query(models.Users.id)
         .filter(models.Users.session_id == request.sid)
@@ -138,15 +144,14 @@ def on_new_message(msg):
         bot_command_called(msg["message"])
 
 
-
 @socketio.on("new google user")
 def successful_google_login(user_info):
-    '''Handle when a user successfully logs in with Google account'''
+    """Handle when a user successfully logs in with Google account"""
     name = user_info["name"]
     email = user_info["email"]
     avatar = user_info["avatar"]
 
-    add_user(name,email,avatar)
+    add_user(name, email, avatar)
 
     if email not in CONNECTED_USERS:
         CONNECTED_USERS.append(email)
@@ -157,15 +162,14 @@ def successful_google_login(user_info):
 
 @socketio.on("connect")
 def on_connect():
-    '''Update client when new window opened'''
-    add_bot()
+    """Update client when new window opened"""
     update_user_count()
     emit_all_messages()
 
 
 @socketio.on("disconnect")
 def on_disconnect():
-    '''Decrement user count when user disconnects'''
+    """Decrement user count when user disconnects"""
     exists = (
         db.session.query(models.Users)
         .filter(models.Users.session_id == request.sid)
@@ -178,7 +182,7 @@ def on_disconnect():
 
 @app.route("/")
 def index():
-    '''Render html page and values when client opened'''
+    """Render html page and values when client opened"""
     emit_all_messages()
     update_user_count()
     return flask.render_template("index.html")
@@ -188,6 +192,6 @@ if __name__ == "__main__":
     socketio.run(
         app,
         host=os.getenv("IP", "0.0.0.0"),
-        port=int(os.getenv("PORT", 8080)),
+        port=int(os.getenv("PORT", "8080")),
         debug=True,
     )
