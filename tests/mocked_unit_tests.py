@@ -1,5 +1,5 @@
 """Mocked Tests"""
-# pylint: disable=wrong-import-position, too-few-public-methods, wrong-import-order, no-self-use, unused-argument, R0902, W0611
+# pylint: disable=wrong-import-position, too-few-public-methods, wrong-import-order, unused-argument, R0902, W0611
 
 import unittest
 import unittest.mock as mock
@@ -50,6 +50,43 @@ class MockedModelChatLog:
         self.message = message
         self.user_id = user_id
 
+
+def mocked_api_funtranslate(bot_call):
+    """Mocked translate API call"""
+    return {
+        "success": {"total": 1},
+        "contents": {"translated": "Text", "text": "text", "translation": "yoda"},
+    }
+
+def mocked_api_funtranslate_length(bot_call):
+    """Mocked translate API call for long length"""
+    length1000 = "i"
+    for i in range(0, 1100):
+        length1000 += str(i)
+    return {
+        "success": {"total": 1},
+        "contents": {
+            "translated": length1000,
+            "text": "translated text will be too long to return",
+            "translation": "yoda",
+        },
+    }
+
+def mocked_api_quote():
+    """Mocked quote API call"""
+    return {
+        "id": 23,
+        "starWarsQuote": "The Force will be with you. Always. — Obi-Wan Kenobi",
+        "faction": 0,
+    }
+
+def mocked_add_user(name, email, avatar):
+    """Add user"""
+    return MockedModelUsers(name, email, avatar, '123')
+
+def mocked_add_new_message(message, uid):
+    """Add new message"""
+    return MockedModelChatLog(message, uid)
 
 class MockedTestCases(unittest.TestCase):
     """Mocked test cases"""
@@ -165,54 +202,17 @@ class MockedTestCases(unittest.TestCase):
             },
         ]
 
-    def mocked_api_funtranslate(self, bot_call):
-        """Mocked translate API call"""
-        return {
-            "success": {"total": 1},
-            "contents": {"translated": "Text", "text": "text", "translation": "yoda"},
-        }
-
-    def mocked_api_funtranslate_length(self, bot_call):
-        """Mocked translate API call for long length"""
-        length1000 = "i"
-        for i in range(0, 1100):
-            length1000 += str(i)
-        return {
-            "success": {"total": 1},
-            "contents": {
-                "translated": length1000,
-                "text": "translated text will be too long to return",
-                "translation": "yoda",
-            },
-        }
-
-    def mocked_api_quote(self):
-        """Mocked quote API call"""
-        return {
-            "id": 23,
-            "starWarsQuote": "The Force will be with you. Always. — Obi-Wan Kenobi",
-            "faction": 0,
-        }
-
-    def mocked_add_user(self, name, email, avatar):
-        """Add user"""
-        return MockedModelUsers(name, email, avatar, '123')
-
-    def mocked_add_new_message(self, message, uid):
-        """Add new message"""
-        return MockedModelChatLog(message, uid)
-
     def test_add_user_to_db(self):
         """Test add user"""
         for test in self.success_add_user_params:
-            with mock.patch("models.db.session.add", self.mocked_add_user):
+            with mock.patch("models.db.session.add", mocked_add_user):
                 response = models.Users(
                     test[KEY_USER],
                     test[KEY_EMAIL],
                     test[KEY_AVATAR],
                     test[KEY_SESSION_ID],
                 )
-                expected = self.mocked_add_user(
+                expected = mocked_add_user(
                     test[KEY_USER], test[KEY_EMAIL], test[KEY_AVATAR]
                 )
                 self.assertEqual(response.user_name, expected.user_name)
@@ -223,9 +223,9 @@ class MockedTestCases(unittest.TestCase):
     def test_add_message_to_db(self):
         """Test add message"""
         for test in self.success_add_message_params:
-            with mock.patch("models.db.session.add", self.mocked_add_new_message):
+            with mock.patch("models.db.session.add", mocked_add_new_message):
                 response = models.Chatlog(test[KEY_MESSAGE], test[KEY_ID])
-                expected = self.mocked_add_new_message(test[KEY_MESSAGE], test[KEY_ID])
+                expected = mocked_add_new_message(test[KEY_MESSAGE], test[KEY_ID])
                 self.assertEqual(response.message, expected.message)
                 self.assertEqual(response.user_id, expected.user_id)
 
@@ -234,7 +234,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.success_translate_params:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate("")
+            translated_text = mocked_api_funtranslate("")
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
@@ -247,7 +247,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.failure_translate_params:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate("")
+            translated_text = mocked_api_funtranslate("")
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
@@ -260,7 +260,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.success_chatbot_quote:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            quote = self.mocked_api_quote()
+            quote = mocked_api_quote()
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = quote
             response = chatbot.get_bot_response()
@@ -273,7 +273,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.failure_chatbot_quote:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            quote = self.mocked_api_quote()
+            quote = mocked_api_quote()
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = quote
             response = chatbot.get_bot_response()
@@ -286,7 +286,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.success_translate_length_too_long:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate_length("")
+            translated_text = mocked_api_funtranslate_length("")
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
@@ -299,7 +299,7 @@ class MockedTestCases(unittest.TestCase):
         for test in self.failure_translate_length_too_long:
             chatbot = ChatBot(test[KEY_INPUT])
             mock_get_patch = mock.patch("requests.get")
-            translated_text = self.mocked_api_funtranslate_length("")
+            translated_text = mocked_api_funtranslate_length("")
             mock_get = mock_get_patch.start()
             mock_get.return_value.json.return_value = translated_text
             response = chatbot.get_bot_response()
@@ -311,9 +311,9 @@ class MockedTestCases(unittest.TestCase):
     def test_socket_emit(self, emit_message):
         """Test socket emit"""
         for test in self.success_socket_user:
-            with mock.patch("app.add_user", self.mocked_add_user):
+            with mock.patch("app.add_user", mocked_add_user):
                 successful_google_login(test[KEY_EXPECTED])
-                expected = self.mocked_add_user(
+                expected = mocked_add_user(
                     test[KEY_EXPECTED]["name"],
                     test[KEY_EXPECTED]["email"],
                     test[KEY_EXPECTED]["avatar"],
