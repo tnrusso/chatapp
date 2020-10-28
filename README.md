@@ -10,6 +10,8 @@ Project 2 is a web application created using Flask, HTML, CSS, React, SQLAlchemy
 
 [Project Status](#project-status)
 
+[Testing](#testing)
+
 # Installation
 
 ### 0. Clone the project
@@ -132,3 +134,18 @@ Deployed on [Heroku](https://www.heroku.com/)
 2. A user has no limit on how many messages they can send in a set amount of time, meaning users are allowed to send hundreds of messages per minute if they can. A possible fix for this would be to set a limit on how many messages a user can send within a given time, and if the limit it hit, the user will be "muted" and be unable to send messages for a set amount of time. 
 3. A new list that can display the names of the users currently connected to the chat can be implemented by creating a new useState in React. The state will hold an array of names and would update as users connect and/or disconnect, similar to how the number of connected of users is being tracked. The div that will hold the list 
  of usernames could be set to be next to the chat with a button that will show/hide users in the chat when clicked. 
+ 
+ # Testing
+
+### Set up testing
+- After finishing the instalation steps, enter the command `pip install coverage`
+- Run the command `coverage run -m --source=. unittest tests/*.py && coverage html` This will run the test files located in the tests/ directory and create the htmlcov directory along with its files
+- Locate the `htmlcov/` directory and right click the `index.html` file and click "Preview", this will show the coverage % for every python file in the project directory
+- Rerunning the command `coverage run -m --source=. unittest tests/*.py && coverage html` will update these percentages as changes are made
+
+### 1. Why did you choose to test the code that you did? (details in rubric)
+I chose to test the code that I did because I wanted to make sure that my code was fully functional and was not doing anything that it shouldn't be doing. For example, if I called a function to get a response from the chatbot, I wanted to make sure that whatever input I entered, it would return the proper response. 
+
+### 2. Is there anything else you would like to test if you had the time (or was asked to do so)
+If I had the time, I would have liked to test the websockets in the react scripts to make sure that they are working properly when they are receiving data from the server or sending data to the server. 
+
