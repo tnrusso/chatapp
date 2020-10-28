@@ -138,7 +138,7 @@ Deployed on [Heroku](https://www.heroku.com/)
  # Testing
 
 ### Set up testing
-- After finishing the instalation steps, enter the command `pip install coverage`
+- After finishing the installation steps, enter the command `pip install coverage`
 - Run the command `coverage run -m --source=. unittest tests/*.py && coverage html` This will run the test files located in the `tests/` directory and create the `htmlcov` directory along with its files
 - Locate the `htmlcov/` directory and right click the `index.html` file and click "Preview", this will show the coverage % for every python file in the project directory
 - Rerunning the command `coverage run -m --source=. unittest tests/*.py && coverage html` will update these percentages as changes are made
