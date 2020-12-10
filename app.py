@@ -36,6 +36,7 @@ def init_db(app):
     db.create_all()
     db.session.commit()
 
+
 init_db(app)
 
 import models

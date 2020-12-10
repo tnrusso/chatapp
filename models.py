@@ -1,6 +1,6 @@
 '''This module creates the user and chatlog database models'''
 # pylint: disable=no-member, too-few-public-methods
-#import flask_sqlalchemy
+import flask_sqlalchemy
 from app import db
 
 
